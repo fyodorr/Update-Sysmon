@@ -146,17 +146,26 @@
 			<ParentImage condition="end with">C:\Program Files (x86)\Dropbox\Update\DropboxUpdate.exe</ParentImage>
 			<!--SECTION: Dell-->
 			<ParentImage condition="is">C:\Program Files (x86)\Dell\CommandUpdate\InvColPC.exe</ParentImage> <!--Dell:CommandUpdate: Detection process-->
-			<!--SECTION: USAREUR-->
+			<!--SECTION: USAREUR Process Creation Exclusions-->
 			<CommandLine condition="contains">"\\eur.ds.army.mil\netlogon\ENT\Manage-EventLogs.ps1"</CommandLine> <!--Microsoft:PowerShell: Eventlog management-->
 			<CommandLine condition="end with">"C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.ps1"</CommandLine> <!--Microsoft:PowerShell: Quarantine actions-->
 			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\comstat\notifications.ps1"</CommandLine> <!--Microsoft:PowerShell: COMSTAT notifications-->
 			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\comstat\notifications.vbs"</CommandLine> <!--Microsoft:PowerShell: COMSTAT notifications-->
 			<Image condition="begin with">C:\Program Files (x86)\McAfee\</Image> <!--McAfee: routine actions-->
 			<Image condition="begin with">C:\Program Files\McAfee\</Image> <!--McAfee: routine actions-->
+			<Image condition="begin with">C:\Program Files (x86)\Common Files\McAfee\</Image> <!--McAfee: routine actions-->
+			<Image condition="begin with">C:\Program Files\Common Files\McAfee\</Image> <!--McAfee: routine actions-->
 			<CommandLine condition="is">C:\WINDOWS\system32\svchost.exe -k GPSvcGroup</CommandLine> <!--Microsoft: Group Policy Provider-->
 			<ParentCommandLine condition="is">C:\WINDOWS\system32\svchost.exe -k GPSvcGroup</ParentCommandLine> <!--Microsoft: Group Policy Provider spawns gpscript.exe-->
 			<ParentCommandLine condition="is">C:\WINDOWS\system32\svchost.exe -k DcomLaunch</ParentCommandLine> <!--Microsoft: Spawns wmiprvse.exe -Embedding-->
 			<Image condition="is">C:\Windows\servicing\TrustedInstaller.exe</Image> <!--Microsoft: Windows installer noise-->
+			<Image condition="is">C:\Windows\System32\LogonUI.exe</Image> <!--Microsoft: Windows LogonUI called by winlogon.exe-->
+			<Image condition="is">C:\Windows\System32\efsui.exe</Image> <!--Microsoft: Windows EFS-->
+			<Image condition="begin with">C:\Program Files\Git\</Image> <!--Git: routine actions-->
+			<ParentImage condition="is">C:\Program Files (x86)\Microsoft VS Code\Code.exe</ParentImage> <!--Microsoft: Visual Studio Code-->
+			<Image condition="begin with">C:\Program Files (x86)\Microsoft VS Code\</Image> <!--Microsoft: Visual Studio Code-->
+			<Image condition="begin with">C:\Program Files (x86)\Citrix\ICA Client\</Image> <!--Citrix: ICA Client-->
+			<ParentImage condition="is">C:\Windows\CCM\CcmExec.exe</ParentImage> <!--Microsoft: SMS (SCCM) Agent Host service-->
 		</ProcessCreate>
 
 	<!--SYSMON EVENT ID 2 : FILE CREATION TIME RETROACTIVELY CHANGED IN THE FILESYSTEM-->
@@ -179,7 +188,7 @@
 			<Image condition="begin with">C:\Users</Image> <!--Tools downloaded by users can use other processes for networking, but this is a very valuable indicator.-->
 			<Image condition="begin with">C:\ProgramData</Image> <!--Normally, network communications should be sourced from "Program Files" not from ProgramData, something to look at-->
 			<Image condition="begin with">C:\Windows\Temp</Image> <!--Suspicious anything would communicate from the system-level temp directory-->
-			<!--USAREUR Network Monitoring-->
+			<!--SECTION: USAREUR Network Inclusions-->
 			<Image condition="begin with">C:\Program Files (x86)\USAF\ACCM</Image> <!--Monitor what this application is communicating with-->
 			<!--Suspicious Windows tools-->
 			<Image condition="image">at.exe</Image> <!--Microsoft:Windows: Remote task scheduling | Credit @ion-storm -->
@@ -226,6 +235,8 @@
 			<DestinationHostname condition="end with">microsoft.com</DestinationHostname> <!--Microsoft:Update delivery-->
 			<DestinationHostname condition="end with">microsoft.com.akadns.net</DestinationHostname> <!--Microsoft:Update delivery-->
 			<DestinationHostname condition="end with">microsoft.com.nsatc.net</DestinationHostname> <!--Microsoft:Update delivery-->
+			<!--SECTION: USAREUR Network Exclusions-->
+			<DestinationPort condition="is">389</DestinationPort> <!--Microsoft:Windows:LDAP-->
 		</NetworkConnect>
 
 	<!--SYSMON EVENT ID 4 : RESERVED FOR SYSMON STATUS MESSAGES, THIS LINE IS INCLUDED FOR DOCUMENTATION PURPOSES ONLY-->
@@ -247,6 +258,8 @@
 			<Signature condition="contains">microsoft</Signature> <!--Exclude signed Microsoft drivers-->
 			<Signature condition="contains">windows</Signature> <!--Exclude signed Microsoft drivers-->
 			<Signature condition="begin with">Intel </Signature> <!--Exclude signed Intel drivers-->
+			<!--SECTION: USAREUR Driver Load Exclusions-->
+			<Signature condition="begin with">McAfee</Signature> <!--Exclude signed McAfee drivers-->
 		</DriverLoad>
 
 	<!--SYSMON EVENT ID 7 : DLL (IMAGE) LOADED BY PROCESS-->
@@ -269,7 +282,7 @@
 			<SourceImage condition="is">C:\Windows\System32\audiodg.exe</SourceImage>
 			<StartModule condition="is">C:\windows\system32\kernel32.dll</StartModule>
 			<TargetImage condition="end with">Google\Chrome\Application\chrome.exe</TargetImage>
-			<!--SECTION: USAREUR-->
+			<!--SECTION: USAREUR Remote Thread Exclusions-->
 			<SourceImage condition="is">C:\Program Files\McAfee\Host Intrusion Prevention\FireSvc.exe</SourceImage>			
 		</CreateRemoteThread>
 
@@ -337,7 +350,7 @@
 			<Image condition="is">C:\Program Files (x86)\Dell\CommandUpdate\InvColPC.exe</Image>
 			<!--SECTION: Intel-->
 			<Image condition="is">C:\Windows\system32\igfxCUIService.exe</Image> <!--Intel: Drops bat and other files in \Windows in normal operation-->
-			<!--SECTION: USAREUR-->
+			<!--SECTION: USAREUR File Created Exclusions-->
 			<TargetFilename condition="contains">AppData\Local\Temp\</TargetFilename> <!-- Microsoft:Windows: Temp PowerShell files created by scheduled tasks-->
 			<TargetFilename condition="begin with">C:\Windows\Temp\</TargetFilename> <!-- Microsoft:Windows: Temp PowerShell files created by scheduled tasks-->
 			<TargetFilename condition="is">C:\Windows\System32\Tasks\COMSTAT-Notifications</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
@@ -520,7 +533,7 @@
 			<!--SECTION: 3rd party-->
 			<Image condition="is">C:\Program Files\WIDCOMM\Bluetooth Software\btwdins.exe</Image> <!--Constantly writes to HKLM-->
 			<Image condition="is">C:\Program Files (x86)\Webroot\WRSA.exe</Image> <!--Webroot-->
-			<!--SECTION: USAREUR-->
+			<!--SECTION: USAREUR Registry Modification Exclusions-->
 			<Image condition="is">C:\Program Files (x86)\EMET 5.5\EMET_Service.exe</Image> <!--Microsoft:EMET: Registry noise-->
 			<Image condition="is">C:\WINDOWS\system32\svchost.exe</Image> <!--Microsoft:GroupPolicy: Remove noise from Group Policy registry settings-->
 			<Image condition="is">C:\WINDOWS\system32\services.exe</Image> <!--Microsoft:GroupPolicy: Remove noise from Group Policy registry settings-->
