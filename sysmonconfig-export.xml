@@ -359,7 +359,9 @@
 			<TargetFilename condition="is">C:\Windows\System32\Tasks\QuarantineCore</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="is">C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.vbs</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="is">C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.ps1</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
-			<TargetFilename condition="begin with">C:\Windows\System32\WindowsPowerShell\v1.0\2017</TargetFilename> <!-- Microsoft:Windows: PowerShell transaction logs for 2017-->
+			<TargetFilename condition="begin with">C:\Windows\System32\WindowsPowerShell\v1.0\2017</TargetFilename> <!-- Microsoft:Windows: PowerShell transaction logs (old location)-->
+			<TargetFilename condition="begin with">C:\ProgramData\Microsoft\PowerShell</TargetFilename> <!-- Microsoft:Windows: PowerShell transaction logs (new location)-->
+			<TargetFilename condition="begin with">C:\Windows\CCM\SystemTemp</TargetFilename> <!-- Microsoft:Windows: SCCM Temp directory-->
 		</FileCreate>
 
 	<!--SYSMON EVENT ID 12 & 13 & 14 : REGISTRY MODIFICATION-->
