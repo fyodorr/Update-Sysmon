@@ -1,17 +1,17 @@
 <!--
   sysmon-config | A sysmon configuration focused on default high-quality event tracing and easy customization by the community
-  Master version:	51 | Date: 2017-03-14
+  Master version:	52 | Date: 2017-07-13
   Master author:	@SwiftOnSecurity, other contributors also credited in-line or on Git.
   Master project:	https://github.com/SwiftOnSecurity/sysmon-config
   Master license:	Creative Commons Attribution 4.0 | You may privatize, fork, edit, teach, publish, or deploy for commercial use - with attribution in the text.
 
-  Fork version:	<N/A>
-  Fork author:	<N/A>
-  Fork project:	<N/A>
-  Fork license:	<N/A>
+  Fork version:	1 | Date: 2017-07-25
+  Fork author:	Thomas Connell
+  Fork project:	US Army Europe
 
   REQUIRED: Sysmon version 6.00 or higher (due to changes in registry syntax)
 	https://technet.microsoft.com/en-us/sysinternals/bb545021.aspx
+	Note that 6.03 has important fixes for filtering
 
   NOTE: Do not let the imposing size and complexity of this configuration scare you off building your own or customizing it.
 	This configuration is based around known high-quality event tracing, and thus looks extremely complicated.
@@ -109,7 +109,7 @@
 			<CommandLine condition="begin with">"C:\Program Files\Mozilla Firefox\plugin-container.exe" --channel</CommandLine> <!-- Mozilla:Firefox: Large command-line arguments | Credit @Darkbat91 -->
 			<CommandLine condition="begin with">"C:\Program Files (x86)\Mozilla Firefox\plugin-container.exe" --channel</CommandLine> <!-- Mozilla:Firefox: Large command-line arguments | Credit @Darkbat91 -->
 			<!--SECTION: Adobe-->
-			<CommandLine condition="contains">AcroRd32.exe" /CR </CommandLine> <!--Adobe:AcrobatReader: Uninsteresting sandbox subprocess-->
+			<CommandLine condition="contains">AcroRd32.exe" /CR </CommandLine> <!--Adobe:AcrobatReader: Uninteresting sandbox subprocess-->
 			<CommandLine condition="contains">AcroRd32.exe" --channel=</CommandLine> <!--Adobe:AcrobatReader: Uninteresting sandbox subprocess-->
 			<Image condition="end with">C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\AcroCEF\AcroCEF.exe</Image> <!--Adobe:Acrobat: Sandbox subprocess, still evaluating security exposure-->
 			<ParentImage condition="end with">C:\Program Files (x86)\Common Files\Adobe\AdobeGCClient\AGSService.exe</ParentImage>
@@ -147,10 +147,17 @@
 			<!--SECTION: Dell-->
 			<ParentImage condition="is">C:\Program Files (x86)\Dell\CommandUpdate\InvColPC.exe</ParentImage> <!--Dell:CommandUpdate: Detection process-->
 			<!--SECTION: USAREUR Process Creation Exclusions-->
+			<CommandLine condition="contains">\\eur.ds.army.mil\netlogon\ENT\Sysmon\</CommandLine> <!--Microsoft:Sysmon: Maintenance activity-->
 			<CommandLine condition="contains">"\\eur.ds.army.mil\netlogon\ENT\Manage-EventLogs.ps1"</CommandLine> <!--Microsoft:PowerShell: Eventlog management-->
 			<CommandLine condition="end with">"C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.ps1"</CommandLine> <!--Microsoft:PowerShell: Quarantine actions-->
+			<CommandLine condition="end with">"C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.vbs"</CommandLine> <!--Microsoft:PowerShell: Quarantine actions-->
+			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\quarantine\Invoke-QuarantineWatcher.ps1"</CommandLine> <!--Microsoft:PowerShell: Quarantine actions-->
+			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\quarantine\Invoke-Quarantine.ps1"</CommandLine> <!--Microsoft:PowerShell: Quarantine actions-->
 			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\comstat\notifications.ps1"</CommandLine> <!--Microsoft:PowerShell: COMSTAT notifications-->
 			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\comstat\notifications.vbs"</CommandLine> <!--Microsoft:PowerShell: COMSTAT notifications-->
+			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\ENT\LAPS\LAPS_Workstation.ps1"</CommandLine> <!--Microsoft:PowerShell: LAPS activity-->
+			<CommandLine condition="end with">"\\eur.ds.army.mil\netlogon\Siren\siren.ps1"</CommandLine> <!--Microsoft:PowerShell: Siren activity-->
+			<CommandLine condition="end with">appcmd.exe list MODULE</Image> <!--ACAS: IIS Server scan activity-->
 			<Image condition="begin with">C:\Program Files (x86)\McAfee\</Image> <!--McAfee: routine actions-->
 			<Image condition="begin with">C:\Program Files\McAfee\</Image> <!--McAfee: routine actions-->
 			<Image condition="begin with">C:\Program Files (x86)\Common Files\McAfee\</Image> <!--McAfee: routine actions-->
@@ -159,6 +166,7 @@
 			<ParentCommandLine condition="is">C:\WINDOWS\system32\svchost.exe -k GPSvcGroup</ParentCommandLine> <!--Microsoft: Group Policy Provider spawns gpscript.exe-->
 			<ParentCommandLine condition="is">C:\WINDOWS\system32\svchost.exe -k DcomLaunch</ParentCommandLine> <!--Microsoft: Spawns wmiprvse.exe -Embedding-->
 			<Image condition="is">C:\Windows\servicing\TrustedInstaller.exe</Image> <!--Microsoft: Windows installer noise-->
+			<Image condition="is">C:\Windows\System32\scrnsave.scr</Image> <!--Microsoft: Windows Screensaver called by winlogon.exe-->
 			<Image condition="is">C:\Windows\System32\LogonUI.exe</Image> <!--Microsoft: Windows LogonUI called by winlogon.exe-->
 			<Image condition="is">C:\Windows\System32\efsui.exe</Image> <!--Microsoft: Windows EFS-->
 			<Image condition="begin with">C:\Program Files\Git\</Image> <!--Git: routine actions-->
@@ -218,7 +226,7 @@
 			<DestinationPort condition="is">5900</DestinationPort> <!--VNC protocol-->
 			<!--Ports: Proxy-->
 			<DestinationPort condition="is">1080</DestinationPort> <!--Socks proxy port | Credit @ion-storm-->
-			<DestinationPort condition="is">3128</DestinationPort> <!--Socks proyx port | Credit @ion-storm-->
+			<DestinationPort condition="is">3128</DestinationPort> <!--Socks proxy port | Credit @ion-storm-->
 			<DestinationPort condition="is">8080</DestinationPort> <!--Socks proxy port | Credit @ion-storm-->
 			<!--Ports: Tor-->
 			<DestinationPort condition="is">1723</DestinationPort> <!--Tor protocol | Credit @ion-storm-->
@@ -237,6 +245,7 @@
 			<DestinationHostname condition="end with">microsoft.com.nsatc.net</DestinationHostname> <!--Microsoft:Update delivery-->
 			<!--SECTION: USAREUR Network Exclusions-->
 			<DestinationPort condition="is">389</DestinationPort> <!--Microsoft:Windows:LDAP-->
+			<DestinationPort condition="is">8443</DestinationPort> <!--ArcSight Server Communications (Java.exe)-->
 		</NetworkConnect>
 
 	<!--SYSMON EVENT ID 4 : RESERVED FOR SYSMON STATUS MESSAGES, THIS LINE IS INCLUDED FOR DOCUMENTATION PURPOSES ONLY-->
@@ -353,10 +362,18 @@
 			<!--SECTION: USAREUR File Created Exclusions-->
 			<TargetFilename condition="contains">AppData\Local\Temp\</TargetFilename> <!-- Microsoft:Windows: Temp PowerShell files created by scheduled tasks-->
 			<TargetFilename condition="begin with">C:\Windows\Temp\</TargetFilename> <!-- Microsoft:Windows: Temp PowerShell files created by scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\config\systemprofile\AppData\Local\Microsoft\Windows\PowerShell\StartupProfileData-NonInteractive</TargetFilename> <!-- Microsoft:Windows: PowerShell activity-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\Microsoft\Windows\SoftwareProtectionPlatform\SvcRestartTask</TargetFilename> <!-- Microsoft:Windows: Software Protection Service task-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\OfficeSoftwareProtectionPlatform\SvcRestartTask</TargetFilename> <!-- Microsoft:Windows: Software Protection Service task-->
 			<TargetFilename condition="is">C:\Windows\System32\Tasks\COMSTAT-Notifications</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="is">C:\Windows\System32\Tasks\NEC Siren</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
-			<TargetFilename condition="is">C:\Windows\System32\Tasks\LAPS-Workstation</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\Manage-Eventlogs</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\Deploy_Sysmon</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="is">C:\Windows\System32\Tasks\QuarantineCore</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\QuarantineWatcher</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\QuarantineNotify</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\Wks_Restricted_Admin_Enforcement</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
+			<TargetFilename condition="is">C:\Windows\System32\Tasks\LAPS-Workstation</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="is">C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.vbs</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="is">C:\Program Files\Common Files\Quarantine\Invoke-QuarantineNotification.ps1</TargetFilename> <!-- Microsoft:Windows: Custom scheduled tasks-->
 			<TargetFilename condition="begin with">C:\Windows\System32\WindowsPowerShell\v1.0\2017</TargetFilename> <!-- Microsoft:Windows: PowerShell transaction logs (old location)-->
